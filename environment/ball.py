@@ -10,8 +10,10 @@ class Ball:
         self.x = self.original_x = x
         self.y = self.original_y = y
         self.radius = radius
-        self.x_vel = self.MAX_VEL
-        self.y_vel = 0
+
+        angle = self._get_random_angle(-40, 40, [0])
+        self.x_vel = math.cos(angle) * self.MAX_VEL
+        self.y_vel = math.sin(angle) * self.MAX_VEL
 
     def _get_random_angle(self, min_angle, max_angle, excluded):
         #bad code universally

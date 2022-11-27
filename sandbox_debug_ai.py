@@ -42,8 +42,8 @@ class PongGame:
                 self.game.move_paddle(False,False)
 
             game_info = self.game.loop()
-            # print(game_info.left_score, game_info.right_score)
-            self.game.draw(True, False)
+            print(game_info.left_score, game_info.right_score)
+            self.game.draw(False, True)
             pygame.display.update()
 
         pygame.quit()
@@ -53,13 +53,18 @@ class PongGame:
         net2 = neat.nn.FeedForwardNetwork.create(genome2, config)
 
         run = True
+        clock = pygame.time.Clock()
+        count = 0
         while run:
+            clock.tick(30)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
 
+
+
             output1 = net1.activate((self.left_paddle.y, self.ball.y, abs(self.left_paddle.x - self.ball.x)))
-            
+                
             #index returns 0 1 or 2 based on whatever the max is. it's a reverse key search basically
             decision1 = output1.index(max(output1))
 
@@ -79,6 +84,18 @@ class PongGame:
                 self.game.move_paddle(False,True)
             else:
                 self.game.move_paddle(False,False)
+
+
+            if (count % 10 == 0):
+                print("-------------------------------------------")
+                print("Tick #{}:".format(count))
+                print("Left Paddle ----")
+                print("left_paddle.y = {}\nball.y = {}\ndist={}\ndecision:{}".format(self.left_paddle.y, self.ball.y, abs(self.left_paddle.x - self.ball.x), decision1))
+                print("Right Paddle ---")
+                print("right_paddle.y = {}\nball.y = {}\ndist={}\ndecision:{}".format(self.right_paddle.y, self.ball.y, abs(self.right_paddle.x - self.ball.x), decision2))
+            
+            
+            count += 1
 
 
             # print(output1, output2)
@@ -116,7 +133,7 @@ def eval_genomes(genomes, config):
 
 
 def run_neat(config):
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoints/neat-checkpoint-13')
+    p = neat.Checkpointer.restore_checkpoint('neat-checkpoints/neat-checkpoint-9')
     #p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
@@ -148,5 +165,5 @@ if __name__ == "__main__":
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_path)
     
-    # run_neat(config)
+    run_neat(config)
     test_ai(config)

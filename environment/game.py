@@ -70,10 +70,10 @@ class Game:
                     ball.y_vel= -1 * (difference_in_y / reduction_factor)
 
                     #give the y_velocity a little randomness
-                    angle = math.radians(random.randrange(-5, 5))
-                    ball.y_vel = math.sin(angle) + ball.y_vel
+                    angle = math.radians(random.randrange(-20, 20))
+                    ball.y_vel = (math.sin(angle) * ball.MAX_VEL) + ball.y_vel
 
-                    
+
                     self.left_hits += 1
 
         #right paddle
@@ -90,8 +90,8 @@ class Game:
 
 
                     #give the y_velocity a little randomness
-                    angle = math.radians(random.randrange(-5, 5))
-                    ball.y_vel = math.sin(angle) + ball.y_vel
+                    angle = math.radians(random.randrange(-20, 20))
+                    ball.y_vel = (math.sin(angle) * ball.MAX_VEL) + ball.y_vel
                 
 
                     self.right_hits += 1
