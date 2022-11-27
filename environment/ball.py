@@ -1,15 +1,25 @@
 import pygame
+import math
+import random
 
 class Ball:
     MAX_VEL = 5
+    COLOR = (255,255,255)
 
-    def __init__(self, x, y, radius, color=(255,255,255)):
+    def __init__(self, x, y, radius):
         self.x = self.original_x = x
         self.y = self.original_y = y
         self.radius = radius
         self.x_vel = self.MAX_VEL
         self.y_vel = 0
-        self.color = color
+
+    def _get_random_angle(self, min_angle, max_angle, excluded):
+        #bad code universally
+        angle = 0
+        while angle in excluded:
+            angle = math.radians(random.randrange(min_angle, max_angle))
+        
+        return angle
 
     def draw(self, win):
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
@@ -21,5 +31,10 @@ class Ball:
     def reset(self):
         self.x = self.original_x
         self.y = self.original_y
-        self.x_vel = -1 * self.x_vel
-        self.y_vel = 0
+
+
+        angle = self._get_random_angle(-30, 30, [0])
+
+        negative_multiplier = -1 if self.x_vel > 0 else 1
+        self.x_vel = negative_multiplier * abs(math.cos(angle) * self.MAX_VEL)
+        self.y_vel = math.sin(angle) * self.MAX_VEL

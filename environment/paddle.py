@@ -1,12 +1,16 @@
+import pygame
+
+
 class Paddle:
     VEL = 4
+    WIDTH, HEIGHT = 20, 100
+    COLOR = (255,255,255)
 
-    def __init__(self, x, y, width, height, color=(255,255,255)):
+    def __init__(self, x, y, width, height):
         self.x = self.original_x = x
         self.y = self.original_y = y
         self.width = width
         self.height = height
-        self.color = color
 
     def draw(self, win):
         pygame.draw.rect(win, self.COLOR, (self.x, self.y, self.width, self.height))
