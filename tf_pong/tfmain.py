@@ -3,6 +3,9 @@ from environment import Game
 import neat
 import os
 import pickle
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models, optimizers
+
 
 class PongGame:
     def __init__ (self, window, width, height):
@@ -115,7 +118,7 @@ def eval_genomes(genomes, config):
 
 
 
-def run_neat(config):
+def run_tf(config):
     p = neat.Checkpointer.restore_checkpoint('neat-checkpoints/neat-checkpoint-13')
     #p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))

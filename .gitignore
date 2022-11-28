@@ -1,1 +1,3 @@
-neat-checkpoints/
+neat-checkpoints/*
+tutorials/
+__pycache__/
