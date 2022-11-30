@@ -6,11 +6,12 @@ import random
 pygame.init()
 
 class GameInformation:
-    def __init__(self, left_hits, right_hits, left_score, right_score):
+    def __init__(self, left_hits, right_hits, left_score, right_score, round_over=False):
         self.left_hits = left_hits
         self.right_hits = right_hits
         self.left_score = left_score
         self.right_score = right_score
+        self.round_over = round_over
 
 class Game:
     SCORE_FONT = pygame.font.SysFont("serif", 50)
@@ -136,16 +137,20 @@ class Game:
         self.ball.move()
         self._handle_collision()
 
+        round_over = False
+
         if self.ball.x < self.left_paddle.x + self.left_paddle.width:
             self.right_score += 1
-            self.ball.reset()
+            round_over = True
+            
+
 
         elif self.ball.x > self.right_paddle.x:
             self.left_score += 1
-            self.ball.reset()
+            round_over = True
+            
 
-        
-        return GameInformation(self.left_hits, self.right_hits, self.left_score, self.right_score)
+        return GameInformation(self.left_hits, self.right_hits, self.left_score, self.right_score, round_over)
 
     def reset(self):
         self.ball.reset()

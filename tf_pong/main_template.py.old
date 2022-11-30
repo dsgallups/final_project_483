@@ -1,0 +1,114 @@
+from environment import Game
+import pygame
+import gym
+from gym import spaces
+import numpy as np
+
+#This takes the environment logic and turns it into a playable game
+class PongGame(gym.Env):
+    """Custom Environment that follows gym interface"""
+    metadata = {'render.modes': ['human']}
+
+    RIGHT = 1
+    LEFT = 0
+
+    # One-time setup
+    def __init__(self, window, width, height, agent_count):
+        super(PongGame, self).__init__()
+
+        self.game = Game(window, width, height)
+        self.left_paddle = self.game.left_paddle
+        self.right_paddle = self.game.right_paddle
+        self.ball = self.game.ball
+        self.agent_count = agent_count
+
+        #define the action space in discrete
+        self.action_space = spaces.Discrete(3, start=0)
+
+        self.observation_space = spaces.Dict({
+                "paddle_y": spaces.Box(low=0, high=height), 
+                "ball_y": spaces.Box(low=0, high=height), 
+                "diff_x": spaces.Box(low=0, high=width)
+            })
+
+
+    def _next_observation(self, agent_id=RIGHT):
+        #return the observation for an individual
+        
+        if agent_id == self.RIGHT:
+            return np.array([self.right_paddle.y, self.ball.y, abs(self.right_paddle.x - self.ball.x)])
+        elif agent_id == self.LEFT:
+            return np.array([self.left_paddle.y, self.ball.y, abs(self.left_paddle.x - self.ball.x)])
+        else:
+            return False
+
+
+    #def time_step_spec(self): NOT REQUIRED SINCE suite_gym makes this
+    #def action_spec(self):    NOT REQUIRED since suite_gym makes this
+
+    
+    #Called whenever an agent selects an action, so this will execute a single frame
+    def step(self, actions):
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+        
+        #step needs to be called with ALL the agents playing.
+        for i, (decision, agent_side) in enumerate(actions):
+            if agent_side == self.RIGHT:
+                if decision == 0:
+                    pass
+                if decision == 1:
+                    self.game.move_paddle(False, True)
+                if decision == 2:
+                    self.game.move_paddle(False, False)
+            else:
+                if decision == 0:
+                    pass
+                if decision == 1:
+                    self.game.move_paddle(True, True)
+                if decision == 2:
+                    self.game.move_paddle(True, False)
+
+        #get the next 
+        game_info = self.game.loop()
+
+
+
+
+
+
+        #return a tuple containing
+        #   the next game state
+        #   the reward
+        #   True if game is over, False if not over
+        #   Dictionary for any extra info
+
+        return (next_state, reward, terminated, truncated, info)
+
+
+    #Will reset the game
+    def reset(self, agent_side):
+        self.game.reset()
+        return self._next_observation(agent_side)
+
+    #Contains render code. Draw exactly one frame.
+    def render(self):
+        pass
+
+
+    #unsure
+    def seed(self):
+        pass
+
+    #unsure
+    def close(self):
+        pass
+
+
+
+
+
+
+if __name__ == "__main__":

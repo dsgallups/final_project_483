@@ -1,0 +1,1 @@
+Check to see if you can make pygame work without showing the window
