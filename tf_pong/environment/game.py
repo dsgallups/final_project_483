@@ -3,7 +3,6 @@ from .ball import Ball
 import pygame
 import math
 import random
-pygame.init()
 
 class GameInformation:
     def __init__(self, left_hits, right_hits, left_score, right_score, round_over=False):
@@ -14,12 +13,16 @@ class GameInformation:
         self.round_over = round_over
 
 class Game:
-    SCORE_FONT = pygame.font.SysFont("serif", 50)
+    # SCORE_FONT = pygame.font.SysFont("serif", 50)
     WHITE = (255,255,255)
     BLACK = (0,0,0)
     RED = (255, 0, 0)
 
     def __init__(self, window, width, height):
+        if window != False:
+            pygame.init()
+            self.SCORE_FONT = pygame.font.SysFont("serif", 50)
+
         self.window = window
         self.width = width
         self.height = height

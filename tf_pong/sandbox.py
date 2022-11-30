@@ -6,8 +6,9 @@ import gym
 import pandas as pd
 import numpy as np
 from gym import spaces
+import pygame
+import os
 
-env = gym.make('MountainCar-v0')
 
 
 df = pd.DataFrame([[10, 20, 30], [100, 200, 300]],
@@ -30,28 +31,9 @@ def get_methods(object, spacing=20):
 
 ##############################################################################
 
-from tf_agents.environments import gym_wrapper
-from tf_agents.environments import py_environment
-from tf_agents.environments import wrappers
-from tf_agents.typing import types
-
-from typing import Any, Callable, Dict, Optional, Sequence, Text
-
-TimeLimitWrapperType = Callable[[py_environment.PyEnvironment, int],
-                                py_environment.PyEnvironment]
-
-height=800
-width=600
-
-gym_env = gym.spec('MountainCar-v0').make()
-
-print(get_methods(gym_env))
-
-
-print(spaces.Dict({
-                "paddle_y": spaces.Box(low=0, high=height, shape=()), 
-                "ball_y": spaces.Box(low=0, high=height, shape=()), 
-                "diff_x": spaces.Box(low=0, high=width, shape=())
-            }))
-
-print(np.array([2, 3, 4]))
+  try:
+    os.environ["DISPLAY"]
+  except:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
+pygame.init()
+pygame.display.set_mode((10, 10), display=0)

@@ -23,7 +23,7 @@ class TFPong(py_environment.PyEnvironment):
     LEFT, RIGHT = 0, 1
 
     # One-time setup
-    def __init__(self, window=0, width=700, height=500, agent_count=1, show_display=False):
+    def __init__(self, window=False, width=700, height=500, agent_count=1, show_display=False):
         self._action_spec = array_spec.BoundedArraySpec(
             shape=(), dtype=np.int32, minimum=0, maximum=2, name='action'
         )
@@ -31,14 +31,14 @@ class TFPong(py_environment.PyEnvironment):
             shape=(3,), dtype=np.float32, minimum=0.0, name='observation'
         )
         
+        self.show_display = show_display
 
 
         #to be possibly used in the future...for now 
         #we will train a single agent against our neat AI.
-        if window == 0:
+        if window == False and self.show_display == True:
             window = pygame.display.set_mode((width, height))
     
-        self.show_display = show_display
         self.game = Game(window, width, height)
         self.agent_count = agent_count
 
@@ -81,6 +81,11 @@ class TFPong(py_environment.PyEnvironment):
 
         action_result = self.game.loop()
         self._state = self._get_state()
+        
+        if self.show_display:
+            self.game.draw(draw_score=False, draw_hits=True)
+            pygame.display.update()
+        
 
         if action_result.round_over:
             reward = action_result.right_hits

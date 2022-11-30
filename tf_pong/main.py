@@ -25,4 +25,20 @@ if __name__ == "__main__":
 
     env = Pong()
     utils.validate_py_environment(env, episodes=5)
-    print("finished")
+
+    print('Observation Spec:')
+    print(env.time_step_spec().observation)
+
+    print('Reward Spec:')
+    print(env.time_step_spec().reward)
+
+
+    print('Action Spec:')
+    print(env.action_spec())
+    
+
+
+    print("------------------------------------------------------------")
+    print("ENDING PONG")
+    print("------------------------------------------------------------")
+
