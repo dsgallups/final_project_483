@@ -23,7 +23,8 @@ class TFPong(py_environment.PyEnvironment):
     LEFT, RIGHT = 0, 1
 
     # One-time setup
-    def __init__(self, window=False, width=700, height=500, agent_count=1, show_display=False):
+    def __init__(self, window=False, width=700, height=500, agent_count=1, show_display=False, title="TFPong Window"):
+        super().__init__(self)
         self._action_spec = array_spec.BoundedArraySpec(
             shape=(), dtype=np.int32, minimum=0, maximum=2, name='action'
         )
@@ -39,7 +40,7 @@ class TFPong(py_environment.PyEnvironment):
         if window == False and self.show_display == True:
             window = pygame.display.set_mode((width, height))
     
-        self.game = Game(window, width, height)
+        self.game = Game(window, width, height, title)
         self.agent_count = agent_count
 
 
@@ -53,6 +54,7 @@ class TFPong(py_environment.PyEnvironment):
         ball_y = self.game.ball.y
         diff_x = abs(self.game.right_paddle.x - self.game.ball.x)
         return np.array([paddle_y, ball_y, diff_x], dtype=np.float32)
+    
 
     def action_spec(self):
         return self._action_spec

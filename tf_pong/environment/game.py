@@ -18,10 +18,12 @@ class Game:
     BLACK = (0,0,0)
     RED = (255, 0, 0)
 
-    def __init__(self, window, width, height):
+    def __init__(self, window, width, height, title):
         if window != False:
             pygame.init()
             self.SCORE_FONT = pygame.font.SysFont("serif", 50)
+            pygame.display.set_caption(title)
+        self.title = title
 
         self.window = window
         self.width = width

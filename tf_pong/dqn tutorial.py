@@ -1,13 +1,9 @@
 from __future__ import absolute_import, division, print_function
 
-import base64
-import imageio
-import IPython
-import matplotlib
+
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
-import pyvirtualdisplay
 import reverb
 
 import tensorflow as tf
@@ -28,8 +24,6 @@ from tf_agents.specs import tensor_spec
 from tf_agents.utils import common
 
 
-# Set up a virtual display for rendering OpenAI gym environments.
-display = pyvirtualdisplay.Display(visible=0, size=(1400, 900)).start()
 
 
 num_iterations = 20000 # @param {type:"integer"}
@@ -208,6 +202,7 @@ dataset = replay_buffer.as_dataset(
 dataset
 
 iterator = iter(dataset)
+print("ITERATOR ------------------------")
 print(iterator)
 
 # For the curious:
@@ -218,10 +213,6 @@ print(iterator)
 # iterator.next()
 
 #@test {"skip": true}
-try:
-  %%time
-except:
-  pass
 
 # (Optional) Optimize by wrapping some of the code in a graph using TF function.
 agent.train = common.function(agent.train)

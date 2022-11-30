@@ -1,9 +1,15 @@
-ValueError: Given `time_step`: TimeStep(
-{'discount': array(1., dtype=float32),
- 'observation': <bound method TFPong._get_state of <environment.tfpong.TFPong object at 0x7f34ccab84c0>>,
- 'reward': array(0., dtype=float32),
- 'step_type': array(1, dtype=int32)}) does not match expected `time_step_spec`: TimeStep(
-{'discount': BoundedArraySpec(shape=(), dtype=dtype('float32'), name='discount', minimum=0.0, maximum=1.0),
- 'observation': BoundedArraySpec(shape=(3,), dtype=dtype('float32'), name='observation', minimum=0.0, maximum=3.4028234663852886e+38),
- 'reward': ArraySpec(shape=(), dtype=dtype('float32'), name='reward'),
- 'step_type': ArraySpec(shape=(), dtype=dtype('int32'), name='step_type')})
+tensorflow.python.framework.errors_impl.InvalidArgumentError: {{function_node __wrapped__IteratorGetNext_output_types_11_device_/job:localhost/replica:0/task:0/device:CPU:0}} 
+
+    Received incompatible tensor at flattened index 0 from table 'uniform_table'.  
+    Specification has   (dtype, shape): (int32, [?]).  
+    Tensor has          (dtype, shape): (int32, [2,1]).
+
+
+Table signature: 
+0: Tensor<name: 'step_type/step_type', dtype: int32, shape: [?]>, 
+1: Tensor<name: 'observation/observation', dtype: float, shape: [?,3]>, 
+2: Tensor<name: 'action/action', dtype: int32, shape: [?]>, 
+3: Tensor<name: 'next_step_type/step_type', dtype: int32, shape: [?]>, 
+4: Tensor<name: 'reward/reward', dtype: float, shape: [?]>, 
+5: Tensor<name: 'discount/discount', dtype: float, shape: [?]> 
+[Op:IteratorGetNext]
