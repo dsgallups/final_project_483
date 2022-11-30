@@ -25,17 +25,19 @@ from tf_agents.metrics import tf_metrics
 from tf_agents.networks import sequential
 from tf_agents.policies import py_tf_eager_policy
 from tf_agents.policies import random_tf_policy
+from tf_agents.policies import policy_saver
 from tf_agents.replay_buffers import reverb_replay_buffer
 from tf_agents.replay_buffers import reverb_utils
 from tf_agents.trajectories import trajectory
 from tf_agents.specs import tensor_spec
 from tf_agents.utils import common
-
+import matplotlib.pyplot as plt
+import os
 import pygame
 from environment import TFPong as Pong
 import time
 #Hyperparameters
-num_iterations = 50 # @param {type:"integer"}
+num_iterations = 800 # @param {type:"integer"}
 
 initial_collect_steps = 100  # @param {type:"integer"}
 collect_steps_per_iteration = 1000 # @param {type:"integer"}
@@ -54,10 +56,10 @@ if __name__ == "__main__":
     print("STARTING PONG")
     print("------------------------------------------------------------")
 
-    env = Pong(show_display=True, title="Env")
-    train_py_env = Pong(show_display=True, title="Train Py Env")
+    env = Pong(show_display=True, use_neat=True, title="Env")
+    train_py_env = Pong(show_display=True, use_neat=True, title="Train Py Env")
     train_env = tf_py_environment.TFPyEnvironment(train_py_env)
-    eval_py_env = Pong(show_display=True, title="Eval Py Env")
+    eval_py_env = Pong(show_display=True, use_neat=True, title="Eval Py Env")
     eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
     
 
@@ -124,7 +126,7 @@ if __name__ == "__main__":
         q_network=q_net,
         optimizer=optimizer,
         td_errors_loss_fn=common.element_wise_squared_loss,
-        train_step_counter=train_step_counter
+        train_step_counter=train_step_counter,
     )
 
     agent.initialize()
@@ -240,6 +242,24 @@ if __name__ == "__main__":
     # print("Comparison (CAUTION, LONG OUTPUT)")
     # print(iterator.next())
 
+    def create_checkpoint(agent, replay_buffer, global_step):
+        local_dir = os.path.dirname(__file__)
+        temp_dir = os.path.join(local_dir, "tf-checkpoints/")
+        checkpoint_dir = os.path.join(temp_dir, 'checkpoint')
+        train_checkpointer = common.Checkpointer(
+            ckpt_dir=checkpoint_dir,
+            max_to_keep=10,
+            agent=agent,
+            policy=agent.policy,
+            replay_buffer=replay_buffer,
+            global_step=global_step
+        )
+        
+        policy_dir = os.path.join(temp_dir, 'policy')
+        tf_policy_saver = policy_saver.PolicySaver(agent.policy)
+
+        train_checkpointer.save(global_step)
+        tf_policy_saver.save(policy_dir)
 
     #Now, train the agent
 
@@ -290,12 +310,21 @@ if __name__ == "__main__":
 
         if step % eval_interval == 0:
             print("------------------------------------------------------------")
-            print("Evaluating Agent")
+            print("Evaluating and Saving Agent")
+            create_checkpoint(agent, replay_buffer, agent.train_step_counter)
+            print("Saved!")
             avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
             print("step = {0}: Average Return = {1}".format(step, avg_return))
             returns.append(avg_return)
             print("------------------------------------------------------------")
 
+    #create chart showing average returns over iterations
+    iterations = range(0, num_iterations + 1, eval_interval)
+    plt.plot(iterations, returns)
+    plt.xlabel('Iterations')
+    plt.ylabel('Average Return')
+    plt.ylim(top=20)
+    plt.savefig("TF Pong Loss")
 
 
 

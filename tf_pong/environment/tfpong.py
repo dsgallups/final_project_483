@@ -17,13 +17,16 @@ from tf_agents.trajectories import time_step as ts
 
 import pygame
 from .game import Game
+import neat
+import pickle
+import os
 
 class TFPong(py_environment.PyEnvironment):
 
     LEFT, RIGHT = 0, 1
 
     # One-time setup
-    def __init__(self, window=False, width=700, height=500, agent_count=1, show_display=False, title="TFPong Window"):
+    def __init__(self, window=False, width=700, height=500, use_neat=False, show_display=False, title="TFPong Window"):
         super().__init__(self)
         self._action_spec = array_spec.BoundedArraySpec(
             shape=(), dtype=np.int32, minimum=0, maximum=2, name='action'
@@ -41,7 +44,18 @@ class TFPong(py_environment.PyEnvironment):
             window = pygame.display.set_mode((width, height))
     
         self.game = Game(window, width, height, title)
-        self.agent_count = agent_count
+        self.use_neat = use_neat
+        if self.use_neat:
+            local_dir = os.path.dirname(__file__)
+            config_path = os.path.join(local_dir, "config.txt")
+            self.neat_config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                         config_path)
+            with open("environment/best.pickle", "rb") as f:
+                self.neat_model = pickle.load(f)
+            
+            self.neat_model = neat.nn.FeedForwardNetwork.create(self.neat_model, self.neat_config)
+
 
 
         self._state = self._get_state
@@ -74,6 +88,21 @@ class TFPong(py_environment.PyEnvironment):
             # any current action and start a new episode.
             return self.reset()
         
+        #make it observe and decide once step is called
+        if self.use_neat:
+            output = self.neat_model.activate((
+                self.game.left_paddle.y,
+                self.game.ball.y,
+                abs(self.game.left_paddle.x - self.game.ball.x)
+                ))
+            decision = output.index(max(output))
+            if decision == 0:
+                pass
+            elif decision == 1:
+                self.game.move_paddle(True, True)
+            elif decision == 2:
+                self.game.move_paddle(True, False)
+
         if action == 0:
             pass
         elif action == 1:

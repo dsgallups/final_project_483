@@ -60,7 +60,7 @@ class Game:
         right_paddle = self.right_paddle
 
         #ceiling
-        if ball.y + ball.radius >= self.height or ball.y - ball.radius <= 0:
+        if ball.y + (2*ball.radius) >= self.height or ball.y <= 0:
             ball.y_vel *= -1
         
         #left paddle
