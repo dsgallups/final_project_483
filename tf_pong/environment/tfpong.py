@@ -32,7 +32,7 @@ class TFPong(py_environment.PyEnvironment):
             shape=(), dtype=np.int32, minimum=0, maximum=2, name='action'
         )
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=(3,), dtype=np.float32, minimum=0.0, name='observation'
+            shape=(3,), dtype=np.float32, name='observation'
         )
         
         self.show_display = show_display

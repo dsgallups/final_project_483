@@ -1,3 +1,4 @@
-neat-checkpoints/*
+**/neat-checkpoints
 tutorials/
 __pycache__/
+**/tf-checkpoints

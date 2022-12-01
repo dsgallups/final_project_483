@@ -94,7 +94,7 @@ if __name__ == "__main__":
             )
         )
 
-    fc_layer_params = (4, 3)
+    fc_layer_params = (50, 50, 50, 50)
     #so then create the dense layers based on our fc_layer_params var
     dense_layers = [dense_layer(num_units) for num_units in fc_layer_params]
     
@@ -242,23 +242,23 @@ if __name__ == "__main__":
     # print("Comparison (CAUTION, LONG OUTPUT)")
     # print(iterator.next())
 
-    def create_checkpoint(agent, replay_buffer, global_step):
+    def create_checkpoint(agent, replay_buffer):
         local_dir = os.path.dirname(__file__)
         temp_dir = os.path.join(local_dir, "tf-checkpoints/")
-        checkpoint_dir = os.path.join(temp_dir, 'checkpoint')
+        checkpoint_dir = os.path.join(temp_dir, 'checkpoint-2')
         train_checkpointer = common.Checkpointer(
             ckpt_dir=checkpoint_dir,
             max_to_keep=10,
             agent=agent,
             policy=agent.policy,
             replay_buffer=replay_buffer,
-            global_step=global_step
+            train_step_counter=agent.train_step_counter
         )
         
-        policy_dir = os.path.join(temp_dir, 'policy')
+        policy_dir = os.path.join(temp_dir, 'policy-2')
         tf_policy_saver = policy_saver.PolicySaver(agent.policy)
 
-        train_checkpointer.save(global_step)
+        train_checkpointer.save(agent.train_step_counter)
         tf_policy_saver.save(policy_dir)
 
     #Now, train the agent
@@ -310,15 +310,17 @@ if __name__ == "__main__":
 
         if step % eval_interval == 0:
             print("------------------------------------------------------------")
-            print("Evaluating and Saving Agent")
-            create_checkpoint(agent, replay_buffer, agent.train_step_counter)
-            print("Saved!")
+            print("Evaluating Agent")
+            # create_checkpoint(agent, replay_buffer)
+            #why does this code reset the step??????
+            # print("Saved!")
             avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
             print("step = {0}: Average Return = {1}".format(step, avg_return))
             returns.append(avg_return)
             print("------------------------------------------------------------")
 
     #create chart showing average returns over iterations
+    create_checkpoint(agent, replay_buffer)
     iterations = range(0, num_iterations + 1, eval_interval)
     plt.plot(iterations, returns)
     plt.xlabel('Iterations')
